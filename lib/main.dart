@@ -1,3 +1,4 @@
+import 'package:blue/SerialAppHome.dart';
 import 'package:blue/blue_app.dart';
 import 'package:flutter/material.dart';
 
@@ -16,7 +17,7 @@ class HomePage extends StatelessWidget {
           body: TabBarView(
             children: [
               FlutterBlueHome(),
-              Icon(Icons.directions_transit),
+              SerialAppHome(),
             ],
           ),
           bottomNavigationBar: Container(
