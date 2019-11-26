@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:blue/widgets.dart';
+import 'package:blue/blue_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 
@@ -10,17 +10,24 @@ class FlutterBlueApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       color: Colors.indigo,
-      home: StreamBuilder<BluetoothState>(
-          stream: FlutterBlue.instance.state,
-          initialData: BluetoothState.unknown,
-          builder: (c, snapshot) {
-            final state = snapshot.data;
-            if (state == BluetoothState.on) {
-              return FindDevicesScreen();
-            }
-            return BluetoothOffScreen(state: state);
-          }),
+      home: FlutterBlueHome(),
     );
+  }
+}
+
+class FlutterBlueHome extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<BluetoothState>(
+        stream: FlutterBlue.instance.state,
+        initialData: BluetoothState.unknown,
+        builder: (c, snapshot) {
+          final state = snapshot.data;
+          if (state == BluetoothState.on) {
+            return FindDevicesScreen();
+          }
+          return BluetoothOffScreen(state: state);
+        });
   }
 }
 
@@ -57,14 +64,11 @@ class BluetoothOffScreen extends StatelessWidget {
 }
 
 class FindDevicesScreen extends StatelessWidget {
-  final scanTimeout = Duration(seconds: 10);
+  final scanTimeout = Duration(minutes: 10);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Find Devices'),
-      ),
       body: RefreshIndicator(
         onRefresh: () => FlutterBlue.instance.startScan(timeout: scanTimeout),
         child: Scrollbar(
@@ -106,6 +110,8 @@ class FindDevicesScreen extends StatelessWidget {
                   initialData: [],
                   builder: (c, snapshot) => Column(
                     children: snapshot.data
+                        .where((r) => r.device.name.length > 0)
+                        .toList()
                         .map(
                           (r) => ScanResultTile(
                             result: r,

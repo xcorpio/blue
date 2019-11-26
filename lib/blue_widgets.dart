@@ -18,9 +18,13 @@ class ScanResultTile extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
           ),
           Text(
+            result.device.type.toString(),
+            style: Theme.of(context).textTheme.caption,
+          ),
+          Text(
             result.device.id.toString(),
             style: Theme.of(context).textTheme.caption,
-          )
+          ),
         ],
       );
     } else {
